@@ -1,7 +1,6 @@
-```markdown
 # OSINT Tool
 
-This Python-based OSINT (Open Source Intelligence) tool provides a graphical user interface (GUI) for conducting various intelligence-gathering activities. Built with Tkinter, it enables users to perform domain-specific searches, execute Google dork queries, perform WHOIS lookups, conduct map searches, and receive cybersecurity tips. The application utilizes threading to ensure smooth performance and integrates popular web services to efficiently gather public information.
+This Python-based OSINT (Open Source Intelligence) tool provides a graphical user interface (GUI) for conducting various intelligence-gathering activities. Built with Tkinter, it enables users to perform domain-specific searches, execute Google dork queries, perform WHOIS lookups, conduct map searches, and receive cybersecurity tips. The application utilizes threading (not working though) to ensure smooth performance and integrates popular web services to efficiently gather public information.
 
 ## Features
 
@@ -77,6 +76,3 @@ Developed by Sanket Subhralok Mohapatra for educational purposes.
 ## Disclaimer
 
 This tool is intended for educational use only. Users are responsible for ensuring compliance with all applicable laws and regulations when using this tool.
-```
-
-*Note: Replace `https://github.com/yourusername/osint-tool.git` with the actual URL of your repository.* 
