@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recon OSINT</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='none' stroke='%233ee6b0' stroke-width='3'/><circle cx='16' cy='16' r='4' fill='%233ee6b0'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/static/style.css">
+  <script>
+    try {
+      const t = localStorage.getItem("recon-theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn only-mobile" id="sidebar-toggle" aria-label="Toggle history">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <a class="brand" href="/" aria-label="Recon home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="7"/>
+        <path d="M16 1v8M16 23v8M1 16h8M23 16h8"/>
+      </svg>
+      <span>RECON</span><small id="version"></small>
+    </a>
+    <div class="topbar-spacer"></div>
+    <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <h2>Recent scans</h2>
+        <button class="link-btn" id="clear-history">Clear</button>
+      </div>
+      <ul class="history" id="history"></ul>
+      <p class="sidebar-empty" id="history-empty">Your scans will appear here. History stays in this browser.</p>
+      <div class="sidebar-foot">
+        <p>For lawful research and education only. Respect privacy and each site's terms.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="search-panel" id="search-panel">
+        <div class="hero" id="hero">
+          <h1>Open-source intelligence,<br><span>one search away.</span></h1>
+          <p>Enter a domain, IP, email, username, phone number, hash or name. Recon detects the type and runs every relevant lookup in parallel.</p>
+        </div>
+        <form class="search" id="search-form" autocomplete="off">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="q" name="q" type="text" placeholder="example.com · 8.8.8.8 · jane@corp.com · torvalds · +44 20 7946 0958" spellcheck="false" aria-label="Target">
+            <span class="type-badge" id="type-badge" hidden></span>
+            <kbd class="kbd-hint">/</kbd>
+            <button type="submit" class="btn-primary" id="scan-btn">Scan</button>
+          </div>
+          <div class="type-row" role="radiogroup" aria-label="Target type">
+            <span class="type-row-label">Type</span>
+            <button type="button" class="type-pill active" data-type="">Auto</button>
+            <button type="button" class="type-pill" data-type="domain">Domain</button>
+            <button type="button" class="type-pill" data-type="ip">IP</button>
+            <button type="button" class="type-pill" data-type="email">Email</button>
+            <button type="button" class="type-pill" data-type="username">Username</button>
+            <button type="button" class="type-pill" data-type="phone">Phone</button>
+            <button type="button" class="type-pill" data-type="hash">Hash</button>
+            <button type="button" class="type-pill" data-type="name">Name</button>
+          </div>
+        </form>
+        <div class="examples" id="examples">
+          <span>Try</span>
+          <button class="chip" data-q="github.com">github.com</button>
+          <button class="chip" data-q="1.1.1.1">1.1.1.1</button>
+          <button class="chip" data-q="torvalds">torvalds</button>
+          <button class="chip" data-q="security@google.com">security@google.com</button>
+          <button class="chip" data-q="+14155550123">+14155550123</button>
+          <button class="chip" data-q="Ada Lovelace">Ada Lovelace</button>
+        </div>
+      </section>
+
+      <section class="capabilities" id="capabilities">
+        <div class="cap"><b>Domains</b><span>DNS · RDAP/WHOIS · subdomains · TLS · tech stack · security headers · SPF/DMARC · Wayback</span></div>
+        <div class="cap"><b>IP addresses</b><span>Geolocation map · ASN · reverse DNS · open ports &amp; CVEs · RDAP</span></div>
+        <div class="cap"><b>Usernames</b><span>Account checks on 45+ platforms, with direct profile links</span></div>
+        <div class="cap"><b>Emails</b><span>MX &amp; provider · disposable/role detection · Gravatar · breach pivots</span></div>
+        <div class="cap"><b>Phones</b><span>Validity · country · carrier · line type · time zone</span></div>
+        <div class="cap"><b>Everything</b><span>Tailored Google/Bing/DDG/Yandex dorks and one-click pivots to 40+ services</span></div>
+      </section>
+
+      <section class="results" id="results" hidden>
+        <div class="summary">
+          <div class="summary-main">
+            <span class="type-badge large" id="sum-type"></span>
+            <h2 id="sum-target"></h2>
+          </div>
+          <div class="summary-stats">
+            <div class="stat"><b id="stat-done">0</b><span>modules</span></div>
+            <div class="stat good"><b id="stat-ok">0</b><span>succeeded</span></div>
+            <div class="stat bad"><b id="stat-fail">0</b><span>failed</span></div>
+            <div class="stat"><b id="stat-time">0.0s</b><span>elapsed</span></div>
+          </div>
+          <div class="summary-actions">
+            <button class="btn-ghost" id="rerun">Re-run</button>
+            <div class="menu">
+              <button class="btn-ghost" id="export-btn" aria-haspopup="true">Export ▾</button>
+              <div class="menu-list" id="export-menu" hidden>
+                <button data-export="json">JSON report</button>
+                <button data-export="md">Markdown report</button>
+                <button data-export="print">Print / PDF</button>
+              </div>
+            </div>
+          </div>
+          <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+        <nav class="module-nav" id="module-nav"></nav>
+        <div class="grid" id="grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
