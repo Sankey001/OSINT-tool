@@ -206,7 +206,7 @@ function drawMap(el, d) {
   if (!el || !window.L) { if (el) el.outerHTML = `<p class="note">Map unavailable (Leaflet failed to load).</p>`; return; }
   const map = L.map(el, { scrollWheelZoom: false, attributionControl: true }).setView([d.lat, d.lon], 9);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/{style}/{z}/{x}/{y}{r}.png", {
-    style: document.documentElement.dataset.theme === "light" ? "light_all" : "dark_all",
+    style: getComputedStyle(document.documentElement).colorScheme === "light" ? "light_all" : "dark_all",
     attribution: "&copy; OpenStreetMap &copy; CARTO", subdomains: "abcd", maxZoom: 19,
   }).addTo(map);
   L.circle([d.lat, d.lon], { radius: 6000, color: "#3ee6b0", weight: 1.5, fillOpacity: 0.15 }).addTo(map);
@@ -323,7 +323,7 @@ async function startScan(raw, forcedType = state.forcedType) {
   $("#sum-type").textContent = det.type;
   updateBadge(det.type);
   addHistory(det.target, det.type);
-  history.replaceState(null, "", `?q=${encodeURIComponent(det.target)}&type=${det.type}`);
+  try { history.replaceState(null, "", `?q=${encodeURIComponent(det.target)}&type=${det.type}`); } catch {}
   document.title = `${det.target} · Recon OSINT`;
 
   const grid = $("#grid");
@@ -526,7 +526,7 @@ document.addEventListener("keydown", (e) => {
 
 $("#theme-toggle").addEventListener("click", () => {
   const root = document.documentElement;
-  const current = root.dataset.theme || "dark";
+  const current = root.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
   root.dataset.theme = current === "dark" ? "light" : "dark";
   try { localStorage.setItem("recon-theme", root.dataset.theme); } catch {}
 });
